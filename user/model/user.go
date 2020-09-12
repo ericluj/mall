@@ -13,5 +13,5 @@ type GormModel struct {
 // User ...
 type User struct {
 	GormModel
-	Name string `json:"name" gorm:"index:name;type:varchar(100);not null;column:name"`
+	Name string `json:"name" gorm:"unique_index:name;type:varchar(100);not null;column:name"`
 }
