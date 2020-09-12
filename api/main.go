@@ -3,6 +3,7 @@ package main
 import (
 	"mall/api/handler"
 	"mall/api/srv"
+	"mall/proto/order"
 	"mall/proto/product"
 	"mall/proto/user"
 
@@ -24,8 +25,9 @@ func main() {
 	service.Options().Service.Init(micro.Transport(grpc.NewTransport()))
 	userSrv := user.NewUserService("go.micro.srv.user", service.Options().Service.Client())
 	productSrv := product.NewProductService("go.micro.srv.product", service.Options().Service.Client())
+	orderSrv := order.NewOrderService("go.micro.srv.order", service.Options().Service.Client())
 
-	srv.Init(userSrv, productSrv)
+	srv.Init(userSrv, productSrv, orderSrv)
 	router := Router()
 	service.Handle("/", router)
 
@@ -47,6 +49,11 @@ func Router() *gin.Engine {
 		r1.GET("/query", handler.QueryProduct)
 		r1.POST("/create", handler.CreateProduct)
 		r1.POST("/update", handler.UpdateProduct)
+	}
+
+	r2 := router.Group("/api/v1/order")
+	{
+		r2.POST("/create", handler.CreateOrder)
 	}
 
 	return router
