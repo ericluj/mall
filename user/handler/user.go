@@ -2,9 +2,11 @@ package handler
 
 import (
 	"context"
-	"github.com/micro/go-micro/v2/util/log"
+
 	"mall/proto/user"
 	"mall/user/dao"
+
+	"github.com/micro/go-micro/v2/util/log"
 )
 
 type User struct{}

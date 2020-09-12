@@ -3,6 +3,7 @@ package main
 import (
 	"mall/api/handler"
 	"mall/api/srv"
+	"mall/proto/product"
 	"mall/proto/user"
 
 	"github.com/gin-gonic/gin"
@@ -22,8 +23,9 @@ func main() {
 
 	service.Options().Service.Init(micro.Transport(grpc.NewTransport()))
 	userSrv := user.NewUserService("go.micro.srv.user", service.Options().Service.Client())
+	productSrv := product.NewProductService("go.micro.srv.product", service.Options().Service.Client())
 
-	srv.Init(userSrv)
+	srv.Init(userSrv, productSrv)
 	router := Router()
 	service.Handle("/", router)
 
@@ -38,6 +40,13 @@ func Router() *gin.Engine {
 	{
 		r.GET("/query", handler.QueryUser)
 		r.POST("/create", handler.CreateUser)
+	}
+
+	r1 := router.Group("/api/v1/product")
+	{
+		r1.GET("/query", handler.QueryProduct)
+		r1.POST("/create", handler.CreateProduct)
+		r1.POST("/update", handler.UpdateProduct)
 	}
 
 	return router

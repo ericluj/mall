@@ -2,10 +2,12 @@ package handler
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
+	"net/http"
+
 	"mall/api/srv"
 	"mall/proto/user"
-	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ErrorResponse struct {
