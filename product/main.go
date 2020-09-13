@@ -4,22 +4,26 @@ import (
 	"mall/product/conf"
 	"mall/product/dao"
 	"mall/product/handler"
-	"mall/proto/product"
+	"mall/product/model"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/micro/cli/v2"
 	"github.com/micro/go-micro/v2"
+	"github.com/micro/go-micro/v2/broker"
 	"github.com/micro/go-micro/v2/transport/grpc"
 	"github.com/micro/go-micro/v2/util/log"
+	"github.com/micro/go-plugins/broker/nsq/v2"
 )
 
 var config conf.Config
 
 func main() {
 	log.Name("go.micro.srv.product")
+	b := nsq.NewBroker(broker.Addrs("127.0.0.1:32782"))
 	service := micro.NewService(
 		micro.Name("go.micro.srv.product"),
 		micro.Transport(grpc.NewTransport()),
+		micro.Broker(b),
 		micro.Flags(
 			&cli.StringFlag{
 				Name:  "database_driver",
@@ -78,8 +82,14 @@ func main() {
 		}),
 	)
 
-	if err := product.RegisterProductHandler(service.Server(), new(handler.Product)); err != nil {
+	brok := service.Server().Options().Broker
+	if err := brok.Connect(); err != nil {
 		panic(err)
+	}
+	// 订阅消息
+	_, err := brok.Subscribe(model.TopicOrder, handler.Order)
+	if err != nil {
+		log.Error(err)
 	}
 
 	if err := service.Run(); err != nil {

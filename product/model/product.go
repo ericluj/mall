@@ -2,6 +2,10 @@ package model
 
 import "time"
 
+const (
+	TopicOrder = "order"
+)
+
 // GormModel ...
 type GormModel struct {
 	ID        uint       `json:"id" gorm:"primary_key"`

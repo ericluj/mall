@@ -3,6 +3,8 @@ package model
 import "time"
 
 const (
+	TopicOrder = "order"
+
 	OrderStatusCreate = "create"
 )
 

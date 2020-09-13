@@ -3,10 +3,10 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"strconv"
-
 	"mall/order/dao"
+	"mall/order/model"
 	"mall/proto/order"
+	"strconv"
 
 	"github.com/micro/go-micro/v2/broker"
 	"github.com/micro/go-micro/v2/util/log"
@@ -23,8 +23,15 @@ func (u *Order) CreateOrder(ctx context.Context, req *order.OrderRequest, rsp *o
 		return err
 	}
 
+	rsp.Id = int64(data.ID)
+	rsp.CreatedAt = data.CreatedAt.Unix()
+	rsp.UpdatedAt = data.UpdatedAt.Unix()
+	rsp.UserID = data.UserID
+	rsp.ProductID = data.ProductID
+	rsp.Status = data.Status
+
 	// Create a broker message
-	msgBody, err := json.Marshal(data)
+	msgBody, err := json.Marshal(rsp)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -34,15 +41,9 @@ func (u *Order) CreateOrder(ctx context.Context, req *order.OrderRequest, rsp *o
 		},
 		Body: msgBody,
 	}
-	if err := u.Broker.Publish("order", msg); err != nil {
+	if err := u.Broker.Publish(model.TopicOrder, msg); err != nil {
 		return err
 	}
 
-	rsp.Id = int64(data.ID)
-	rsp.CreatedAt = data.CreatedAt.Unix()
-	rsp.UpdatedAt = data.UpdatedAt.Unix()
-	rsp.UserID = data.UserID
-	rsp.ProductID = data.ProductID
-	rsp.Status = data.Status
 	return nil
 }
