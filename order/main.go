@@ -9,17 +9,22 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/micro/cli/v2"
 	"github.com/micro/go-micro/v2"
+	"github.com/micro/go-micro/v2/broker"
 	"github.com/micro/go-micro/v2/transport/grpc"
 	"github.com/micro/go-micro/v2/util/log"
+	"github.com/micro/go-plugins/broker/nsq/v2"
 )
 
 var config conf.Config
 
 func main() {
 	log.Name("go.micro.srv.order")
+
+	b := nsq.NewBroker(broker.Addrs("127.0.0.1:32782"))
 	service := micro.NewService(
 		micro.Name("go.micro.srv.order"),
 		micro.Transport(grpc.NewTransport()),
+		micro.Broker(b),
 		micro.Flags(
 			&cli.StringFlag{
 				Name:  "database_driver",
@@ -78,7 +83,12 @@ func main() {
 		}),
 	)
 
-	if err := order.RegisterOrderHandler(service.Server(), new(handler.Order)); err != nil {
+	brok := service.Server().Options().Broker
+	if err := brok.Connect(); err != nil {
+		panic(err)
+	}
+
+	if err := order.RegisterOrderHandler(service.Server(), &handler.Order{Broker: brok}); err != nil {
 		panic(err)
 	}
 
