@@ -9,7 +9,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/micro/cli/v2"
 	"github.com/micro/go-micro/v2"
-	"github.com/micro/go-micro/v2/broker"
 	"github.com/micro/go-micro/v2/transport/grpc"
 	"github.com/micro/go-micro/v2/util/log"
 	"github.com/micro/go-plugins/broker/nsq/v2"
@@ -20,7 +19,7 @@ var config conf.Config
 func main() {
 	log.Name("go.micro.srv.order")
 
-	b := nsq.NewBroker(broker.Addrs("127.0.0.1:32782"))
+	b := nsq.NewBroker(nsq.WithLookupdAddrs([]string{"127.0.0.1:4160"}))
 	service := micro.NewService(
 		micro.Name("go.micro.srv.order"),
 		micro.Transport(grpc.NewTransport()),

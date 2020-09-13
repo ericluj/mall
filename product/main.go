@@ -19,7 +19,7 @@ var config conf.Config
 
 func main() {
 	log.Name("go.micro.srv.product")
-	b := nsq.NewBroker(broker.Addrs("127.0.0.1:32782"))
+	b := nsq.NewBroker(nsq.WithLookupdAddrs([]string{"127.0.0.1:4161"}))
 	service := micro.NewService(
 		micro.Name("go.micro.srv.product"),
 		micro.Transport(grpc.NewTransport()),
