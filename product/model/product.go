@@ -3,7 +3,8 @@ package model
 import "time"
 
 const (
-	TopicOrder = "order"
+	TopicOrder     = "order"
+	ChannelProduct = "product"
 )
 
 // GormModel ...

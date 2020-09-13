@@ -87,7 +87,7 @@ func main() {
 		panic(err)
 	}
 	// 订阅消息
-	_, err := brok.Subscribe(model.TopicOrder, handler.Order)
+	_, err := brok.Subscribe(model.TopicOrder, handler.Order, func(opts *broker.SubscribeOptions) { opts.Queue = model.ChannelProduct })
 	if err != nil {
 		log.Error(err)
 	}
