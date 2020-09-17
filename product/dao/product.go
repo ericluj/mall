@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"github.com/jinzhu/gorm"
 	"mall/product/model"
 )
 
@@ -16,16 +17,31 @@ func (d *Dao) CreateProduct(name string, num int64) (*model.Product, error) {
 }
 
 // QueryProduct ...
-func (d *Dao) QueryProduct(name string) (user model.Product, err error) {
-	if err = d.db.Where(&model.Product{Name: name}).Order("id desc").First(&user).Error; err != nil {
+func (d *Dao) QueryProduct(name string, id int64) (product model.Product, err error) {
+	if id > 0 {
+		if err = d.db.Where("id=?", id).Order("id desc").First(&product).Error; err != nil {
+			return
+		}
+	} else {
+		if err = d.db.Where("name=?", name).Order("id desc").First(&product).Error; err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+// UpdateProduct ...
+func (d *Dao) UpdateProduct(name string, num int64) (product model.Product, err error) {
+	if err = d.db.Model(&product).Where(&model.Product{Name: name}).Update("num", num).Error; err != nil {
 		return
 	}
 	return
 }
 
 // UpdateProduct ...
-func (d *Dao) UpdateProduct(name string, num int64) (user model.Product, err error) {
-	if err = d.db.Model(&user).Where(&model.Product{Name: name}).Update("num", num).Error; err != nil {
+func (d *Dao) ProductNumDecrby(id int64) (err error) {
+	if err = d.db.Model(&model.Product{}).Where("id=?", id).Update("num", gorm.Expr("num - ?", 1)).Error; err != nil {
 		return
 	}
 	return

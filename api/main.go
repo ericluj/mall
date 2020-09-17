@@ -25,10 +25,10 @@ func main() {
 	}
 
 	service.Options().Service.Init(micro.Transport(grpc.NewTransport()), micro.Registry(etcd.NewRegistry()))
+
 	userSrv := user.NewUserService("go.micro.srv.user", service.Options().Service.Client())
 	productSrv := product.NewProductService("go.micro.srv.product", service.Options().Service.Client())
 	orderSrv := order.NewOrderService("go.micro.srv.order", service.Options().Service.Client())
-
 	srv.Init(userSrv, productSrv, orderSrv)
 	router := Router()
 	service.Handle("/", router)

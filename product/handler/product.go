@@ -26,7 +26,7 @@ func (u *Product) CreateProduct(ctx context.Context, req *product.ProductRequest
 }
 
 func (u *Product) QueryProduct(ctx context.Context, req *product.ProductRequest, rsp *product.ProductResponse) error {
-	data, err := dao.GetDao().QueryProduct(req.GetName())
+	data, err := dao.GetDao().QueryProduct(req.GetName(), req.GetId())
 	if err != nil {
 		log.Error("[QueryProduct]", err)
 		return err

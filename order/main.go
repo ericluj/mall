@@ -4,7 +4,10 @@ import (
 	"mall/order/conf"
 	"mall/order/dao"
 	"mall/order/handler"
+	"mall/order/srv"
 	"mall/proto/order"
+	"mall/proto/product"
+	"mall/proto/user"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/micro/cli/v2"
@@ -83,6 +86,10 @@ func main() {
 			return dao.GetDao().Disconnect()
 		}),
 	)
+
+	userSrv := user.NewUserService("go.micro.srv.user", service.Options().Client)
+	productSrv := product.NewProductService("go.micro.srv.product", service.Options().Client)
+	srv.Init(userSrv, productSrv)
 
 	brok := service.Server().Options().Broker
 	if err := brok.Connect(); err != nil {

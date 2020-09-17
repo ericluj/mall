@@ -2,7 +2,7 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
+	"mall/product/dao"
 
 	"mall/proto/order"
 
@@ -16,6 +16,10 @@ func Order(e broker.Event) error {
 		log.Error(err)
 		return err
 	}
-	fmt.Println(data)
+	if err := dao.GetDao().ProductNumDecrby(data.ProductID); err != nil {
+		log.Error("[ProductNumDecrby]", err)
+		return err
+
+	}
 	return nil
 }

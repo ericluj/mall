@@ -10,14 +10,15 @@ import (
 
 func QueryProduct(c *gin.Context) {
 	var req = struct {
-		Name string `form:"name" binding:"required"`
+		Name      string `form:"name"`
+		ProductID int64  `form:"productID"`
 	}{}
 	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	res, err := srv.ProductSrv.QueryProduct(context.Background(), &product.ProductRequest{Name: req.Name})
+	res, err := srv.ProductSrv.QueryProduct(context.Background(), &product.ProductRequest{Name: req.Name, Id: req.ProductID})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 		return
