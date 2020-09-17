@@ -5,6 +5,7 @@ import (
 	"mall/product/dao"
 	"mall/product/handler"
 	"mall/product/model"
+	"mall/proto/product"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/micro/cli/v2"
@@ -92,6 +93,10 @@ func main() {
 	_, err := brok.Subscribe(model.TopicOrder, handler.Order, func(opts *broker.SubscribeOptions) { opts.Queue = model.ChannelProduct })
 	if err != nil {
 		log.Error(err)
+	}
+
+	if err := product.RegisterProductHandler(service.Server(), new(handler.Product)); err != nil {
+		panic(err)
 	}
 
 	if err := service.Run(); err != nil {
