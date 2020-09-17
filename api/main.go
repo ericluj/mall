@@ -1,8 +1,11 @@
 package main
 
 import (
+	"log"
+
 	"mall/api/handler"
 	"mall/api/srv"
+	"mall/lib"
 	"mall/proto/order"
 	"mall/proto/product"
 	"mall/proto/user"
@@ -12,6 +15,8 @@ import (
 	"github.com/micro/go-micro/v2/transport/grpc"
 	"github.com/micro/go-micro/v2/web"
 	"github.com/micro/go-plugins/registry/etcd/v2"
+	wrapperTrace "github.com/micro/go-plugins/wrapper/trace/opentracing/v2"
+	"github.com/opentracing/opentracing-go"
 )
 
 func main() {
@@ -20,11 +25,23 @@ func main() {
 		web.Address(":9090"),
 	)
 
+	//链路追踪
+	t, io, err := lib.NewTracer("tracer-srv", "127.0.0.1:6831")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer io.Close()
+	opentracing.SetGlobalTracer(t)
+
 	if err := service.Init(); err != nil {
 		panic(err)
 	}
 
-	service.Options().Service.Init(micro.Transport(grpc.NewTransport()), micro.Registry(etcd.NewRegistry()))
+	service.Options().Service.Init(
+		micro.Transport(grpc.NewTransport()),
+		micro.Registry(etcd.NewRegistry()),
+		micro.WrapHandler(wrapperTrace.NewHandlerWrapper(opentracing.GlobalTracer())),
+	)
 
 	userSrv := user.NewUserService("go.micro.srv.user", service.Options().Service.Client())
 	productSrv := product.NewProductService("go.micro.srv.product", service.Options().Service.Client())

@@ -11,4 +11,8 @@ require (
 	github.com/micro/go-micro/v2 v2.9.1
 	github.com/micro/go-plugins/broker/nsq/v2 v2.9.1
 	github.com/micro/go-plugins/registry/etcd/v2 v2.9.1
+	github.com/micro/go-plugins/wrapper/trace/opentracing/v2 v2.9.1
+	github.com/opentracing/opentracing-go v1.1.0
+	github.com/uber/jaeger-client-go v2.25.0+incompatible
+	github.com/uber/jaeger-lib v2.2.0+incompatible // indirect
 )

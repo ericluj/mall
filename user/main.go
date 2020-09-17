@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/opentracing/opentracing-go"
+	"mall/lib"
 	"mall/proto/user"
 	"mall/user/conf"
 	"mall/user/dao"
@@ -12,16 +14,27 @@ import (
 	"github.com/micro/go-micro/v2/transport/grpc"
 	"github.com/micro/go-micro/v2/util/log"
 	"github.com/micro/go-plugins/registry/etcd/v2"
+	wrapperTrace "github.com/micro/go-plugins/wrapper/trace/opentracing/v2"
 )
 
 var config conf.Config
 
 func main() {
 	log.Name("go.micro.srv.user")
+
+	//链路追踪
+	t, io, err := lib.NewTracer("tracer-srv", "127.0.0.1:6831")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer io.Close()
+	opentracing.SetGlobalTracer(t)
+
 	service := micro.NewService(
 		micro.Name("go.micro.srv.user"),
 		micro.Transport(grpc.NewTransport()),
 		micro.Registry(etcd.NewRegistry()),
+		micro.WrapHandler(wrapperTrace.NewHandlerWrapper(opentracing.GlobalTracer())),
 		micro.Flags(
 			&cli.StringFlag{
 				Name:  "database_driver",
