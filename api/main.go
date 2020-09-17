@@ -11,18 +11,20 @@ import (
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/transport/grpc"
 	"github.com/micro/go-micro/v2/web"
+	"github.com/micro/go-plugins/registry/etcd/v2"
 )
 
 func main() {
 	service := web.NewService(
 		web.Name("go.micro.api.api"),
+		web.Address(":9090"),
 	)
 
 	if err := service.Init(); err != nil {
 		panic(err)
 	}
 
-	service.Options().Service.Init(micro.Transport(grpc.NewTransport()))
+	service.Options().Service.Init(micro.Transport(grpc.NewTransport()), micro.Registry(etcd.NewRegistry()))
 	userSrv := user.NewUserService("go.micro.srv.user", service.Options().Service.Client())
 	productSrv := product.NewProductService("go.micro.srv.product", service.Options().Service.Client())
 	orderSrv := order.NewOrderService("go.micro.srv.order", service.Options().Service.Client())

@@ -11,6 +11,7 @@ import (
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/transport/grpc"
 	"github.com/micro/go-micro/v2/util/log"
+	"github.com/micro/go-plugins/registry/etcd/v2"
 )
 
 var config conf.Config
@@ -20,6 +21,7 @@ func main() {
 	service := micro.NewService(
 		micro.Name("go.micro.srv.user"),
 		micro.Transport(grpc.NewTransport()),
+		micro.Registry(etcd.NewRegistry()),
 		micro.Flags(
 			&cli.StringFlag{
 				Name:  "database_driver",

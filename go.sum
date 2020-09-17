@@ -322,6 +322,9 @@ github.com/micro/go-plugins v2.0.1+incompatible h1:WYNrIeBhv+84ASevN22Z6ijGJf8bf
 github.com/micro/go-plugins/broker/nsq v0.0.0-20200119172437-4fe21aa238fd h1:F/BQtDwj7W71YPrgMFUawMRhiFJ1Z36FJ70HNZEJvlE=
 github.com/micro/go-plugins/broker/nsq/v2 v2.9.1 h1:20Nn0t+y97FFRZcOOr3rv4wYfOJkpkmBTJtqf6CePrs=
 github.com/micro/go-plugins/broker/nsq/v2 v2.9.1/go.mod h1:tfQUgD57qGaFbo8P67/KHoCgAPjsZInuhEhLcZUkGOE=
+github.com/micro/go-plugins/registry/etcd v0.0.0-20200119172437-4fe21aa238fd h1:ZBwRuDGymfMFL6hoPOw4jVIZ/kNyygP9WEnT8xMWrCY=
+github.com/micro/go-plugins/registry/etcd/v2 v2.9.1 h1:qzuFu/XbgT4RUQy3OPWAynqs5yi5dTV2n855nLUAj3M=
+github.com/micro/go-plugins/registry/etcd/v2 v2.9.1/go.mod h1:0PvzcEdMKfyVnL1riL5D0ole32OhR8XvmWd2MLaHcSg=
 github.com/micro/mdns v0.3.0 h1:bYycYe+98AXR3s8Nq5qvt6C573uFTDPIYzJemWON0QE=
 github.com/micro/mdns v0.3.0/go.mod h1:KJ0dW7KmicXU2BV++qkLlmHYcVv7/hHnbtguSWt9Aoc=
 github.com/micro/protoc-gen-micro v1.0.0/go.mod h1:C8ij4DJhapBmypcT00AXdb0cZ675/3PqUO02buWWqbE=
