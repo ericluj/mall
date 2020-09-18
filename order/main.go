@@ -2,6 +2,7 @@ package main
 
 import (
 	"mall/lib"
+	"mall/lib/tracer"
 	"mall/order/conf"
 	"mall/order/dao"
 	"mall/order/handler"
@@ -24,10 +25,8 @@ import (
 var config conf.Config
 
 func main() {
-	log.Name("go.micro.srv.order")
-
 	//链路追踪
-	t, io, err := lib.NewTracer("tracer-srv", "127.0.0.1:6831")
+	t, io, err := tracer.NewTracer("tracer-srv", "127.0.0.1:6831")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,7 +35,7 @@ func main() {
 
 	b := nsq.NewBroker(nsq.WithLookupdAddrs([]string{"127.0.0.1:4160"}))
 	service := micro.NewService(
-		micro.Name("go.micro.srv.order"),
+		micro.Name(lib.ServiceOrderName),
 		micro.Transport(grpc.NewTransport()),
 		micro.Broker(b),
 		micro.Registry(etcd.NewRegistry()),
@@ -99,8 +98,8 @@ func main() {
 		}),
 	)
 
-	userSrv := user.NewUserService("go.micro.srv.user", service.Options().Client)
-	productSrv := product.NewProductService("go.micro.srv.product", service.Options().Client)
+	userSrv := user.NewUserService(lib.ServiceUserName, service.Options().Client)
+	productSrv := product.NewProductService(lib.ServiceProductName, service.Options().Client)
 	srv.Init(userSrv, productSrv)
 
 	brok := service.Server().Options().Broker

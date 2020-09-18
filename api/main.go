@@ -6,6 +6,7 @@ import (
 	"mall/api/handler"
 	"mall/api/srv"
 	"mall/lib"
+	"mall/lib/tracer"
 	"mall/proto/order"
 	"mall/proto/product"
 	"mall/proto/user"
@@ -21,12 +22,12 @@ import (
 
 func main() {
 	service := web.NewService(
-		web.Name("go.micro.api.api"),
+		web.Name(lib.ServiceApiName),
 		web.Address(":9090"),
 	)
 
 	//链路追踪
-	t, io, err := lib.NewTracer("tracer-srv", "127.0.0.1:6831")
+	t, io, err := tracer.NewTracer("tracer-srv", "127.0.0.1:6831")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,9 +44,9 @@ func main() {
 		micro.WrapHandler(wrapperTrace.NewHandlerWrapper(opentracing.GlobalTracer())),
 	)
 
-	userSrv := user.NewUserService("go.micro.srv.user", service.Options().Service.Client())
-	productSrv := product.NewProductService("go.micro.srv.product", service.Options().Service.Client())
-	orderSrv := order.NewOrderService("go.micro.srv.order", service.Options().Service.Client())
+	userSrv := user.NewUserService(lib.ServiceUserName, service.Options().Service.Client())
+	productSrv := product.NewProductService(lib.ServiceProductName, service.Options().Service.Client())
+	orderSrv := order.NewOrderService(lib.ServiceOrderName, service.Options().Service.Client())
 	srv.Init(userSrv, productSrv, orderSrv)
 	router := Router()
 	service.Handle("/", router)

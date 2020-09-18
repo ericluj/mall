@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/opentracing/opentracing-go"
 	"mall/lib"
+	"mall/lib/tracer"
 	"mall/proto/user"
 	"mall/user/conf"
 	"mall/user/dao"
@@ -20,10 +21,8 @@ import (
 var config conf.Config
 
 func main() {
-	log.Name("go.micro.srv.user")
-
 	//链路追踪
-	t, io, err := lib.NewTracer("tracer-srv", "127.0.0.1:6831")
+	t, io, err := tracer.NewTracer("tracer-srv", "127.0.0.1:6831")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,7 +30,7 @@ func main() {
 	opentracing.SetGlobalTracer(t)
 
 	service := micro.NewService(
-		micro.Name("go.micro.srv.user"),
+		micro.Name(lib.ServiceUserName),
 		micro.Transport(grpc.NewTransport()),
 		micro.Registry(etcd.NewRegistry()),
 		micro.WrapHandler(wrapperTrace.NewHandlerWrapper(opentracing.GlobalTracer())),

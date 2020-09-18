@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/opentracing/opentracing-go"
 	"mall/lib"
+	"mall/lib/tracer"
 	"mall/product/conf"
 	"mall/product/dao"
 	"mall/product/handler"
@@ -23,10 +24,8 @@ import (
 var config conf.Config
 
 func main() {
-	log.Name("go.micro.srv.product")
-
 	//链路追踪
-	t, io, err := lib.NewTracer("tracer-srv", "127.0.0.1:6831")
+	t, io, err := tracer.NewTracer("tracer-srv", "127.0.0.1:6831")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,7 +34,7 @@ func main() {
 
 	b := nsq.NewBroker(nsq.WithLookupdAddrs([]string{"127.0.0.1:4161"}))
 	service := micro.NewService(
-		micro.Name("go.micro.srv.product"),
+		micro.Name(lib.ServiceProductName),
 		micro.Transport(grpc.NewTransport()),
 		micro.Broker(b),
 		micro.Registry(etcd.NewRegistry()),
