@@ -25,7 +25,7 @@ var config conf.Config
 
 func main() {
 	//链路追踪
-	t, io, err := tracer.NewTracer("tracer-srv", "127.0.0.1:6831")
+	t, io, err := tracer.NewTracer(lib.ServiceProductName, "127.0.0.1:6831")
 	if err != nil {
 		log.Fatal(err)
 	}
